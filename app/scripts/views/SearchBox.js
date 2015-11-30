@@ -1,8 +1,11 @@
 'use strict';
 
-var React = require('react'),
-    API = require('../api-interface'),
-    Select = require('react-select');
+var React = require('react');
+var API = require('../api-interface');
+var Select = require('react-select');
+
+var ReactPropTypes = React.PropTypes;
+var AppActions = require('../actions/AppActions');
 
 var SearchBox = React.createClass({
   getInitialState: function() {
@@ -111,7 +114,7 @@ var SearchBox = React.createClass({
   onZipCodeChange: function(e) {
     this.setState({zipCode: e.target.value});
   },
-  handleSubmit: function(e) {
+  _onSubmit: function(e) {
     e.preventDefault();
     console.log(this.state);
     var params = {
@@ -123,7 +126,8 @@ var SearchBox = React.createClass({
       county: this.state.county
     };
 
-    API.getOrganizations(params, this.getSearchResults);
+    //API.getOrganizations(params, this.getSearchResults);
+    AppActions.search(params);
 
   },
   getSearchResults: function(results) {
@@ -136,7 +140,7 @@ var SearchBox = React.createClass({
           <h3 className="panel-title">Search</h3>
         </div>
         <div className="panel-body">
-          <form className="form" onSubmit={this.handleSubmit}>
+          <form className="form" onSubmit={this._onSubmit}>
             <div className="row">
               <div className="col-md-4">
                 <SelectSearchField id="org-type" name="Organization Type" value={this.state.orgType} onChange={this.onOrgTypeChange} dataFetcher={this.getOrgTypes}/>

@@ -2,9 +2,7 @@
 var $ = require('jquery'),
     React = window.React = require('react'),
     ReactDOM = require("react-dom"),
-    Timer = require("./ui/Timer"),
-    SearchBox = require("./ui/SearchBox"),
-    Api = require('./api-interface');
+    EmergencyApp = require("./Views/EmergencyApp");
 
 var searchBoxNode = $("#search-box").get(0);
 
@@ -45,4 +43,4 @@ var searchBoxNode = $("#search-box").get(0);
 //   }
 // });
 
-ReactDOM.render(<SearchBox />, searchBoxNode);
+ReactDOM.render(<EmergencyApp />, searchBoxNode);
