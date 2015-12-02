@@ -44,8 +44,14 @@ var AJAXRequest = function(path, params, callback) {
     data: queryStringify(path, params),
     dataType: "text",
     success: function(xmlResponse) {
-      console.log('ajax response');
-      callback($.xml2json(xmlResponse).data.row);
+      var data = $.xml2json(xmlResponse).data.row;
+
+      //set to empty array in case we get 0 results.
+      if (data === undefined) data = [];
+      //wrap data in array in case we only get one result.
+      if (!Array.isArray(data)) data = [data];
+
+      callback(data);
     }
   });
 }

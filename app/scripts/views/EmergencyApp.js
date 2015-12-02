@@ -4,6 +4,7 @@
  */
 var React = require('react');
 
+var ContentWrapper = require('./ContentWrapper');
 var SearchBox = require('./SearchBox');
 var DataGrid = require('./DataGrid');
 var ApiStore = require('../stores/ApiStore');
@@ -15,6 +16,10 @@ function getAppState() {
   return {
     //searchBoxState: TodoStore.getAll(),
     dataGridState: ApiStore.getData(),
+    states: ApiStore.getStates(),
+    orgTypes: ApiStore.getOrgTypes(),
+    cities: ApiStore.getCities(),
+    counties: ApiStore.getCounties(),
   };
 }
 
@@ -35,16 +40,28 @@ var EmergencyApp = React.createClass({
    * @return {object}
    */
   render: function() {
+    var griddle;
+    if (this.state.dataGridState.length) {
+      griddle = <DataGrid results={this.state.dataGridState} />
+    }
+
     return (
-      <div>
-        <SearchBox />
-        <DataGrid dataProp={this.state.dataGridState} />
-      </div>
+        <ContentWrapper headerTitle="Search" content={
+          <div>
+            <SearchBox
+              states={this.state.states}
+              orgTypes={this.state.orgTypes}
+              cities={this.state.cities}
+              counties={this.state.counties}
+            />
+            {griddle}
+          </div>
+        }/>
     );
   },
 
   /**
-   * Event handler for 'change' events coming from the TodoStore
+   * Event handler for 'change' events coming from the ApiStore
    */
   _onChange: function() {
     this.setState(getAppState());

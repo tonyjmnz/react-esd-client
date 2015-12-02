@@ -2,5 +2,9 @@ var keyMirror = require('keymirror');
 
 module.exports = keyMirror({
   //SB = SearchBox
-  APP_DO_SEARCH: null,
+  API_SEARCH: null,
+  NEW_STATES: null,
+  NEW_DATA: null,
+  NEW_ORGS: null,
+  NEW_COUNTIES: null,
 });

@@ -1,129 +1,78 @@
-var $ = require('jquery');
-require('jquery-xml2json');
-
-var apiURL = "http://people.rit.edu/dmgics/754/23/proxy.php";
-
-// var getOrganizations = function(params, callback) {
-//     var path = "/Organizations";
-//     AJAXRequest(path, params, callback);
-// };
-
-// var getStates = function(callback) {
-//   var path = "/States"
-//   AJAXRequest(path, {}, callback);
-// };
-
-// var getOrgTypes = function(callback) {
-//   var path = "/OrgTypes"
-//   AJAXRequest(path, {}, callback);
-// };
-
-// var getCities = function(params, callback) {
-//     var path = "/Cities";
-//     AJAXRequest(path, params, callback);
-// };
-
-// var getCounties = function(params, callback) {
-//     var path = "/Counties";
-//     AJAXRequest(path, params, callback);
-// };
-
-// var AJAXRequest = function(path, params, callback) {
-//   var queryStringify = function(path, params) {
-//     var paramsString = '';
-//     Object.keys(params).map(function(key) {
-//       paramsString += key + '=' + escape(params[key]) + '&';
-//     });
-//     return {path: path + '?' + paramsString};
-//   };
-
-
-//   $.ajax({
-//     type: "GET",
-//     url: apiURL,
-//     data: queryStringify(path, params),
-//     dataType: "text",
-//     success: function(xmlResponse) {
-//       console.log('ajax response');
-//       callback($.xml2json(xmlResponse).data.row);
-//     }
-//   });
-// }
-
-// module.exports = {
-//   getOrganizations: getOrganizations,
-//   getOrgTypes: getOrgTypes,
-//   getStates: getStates,
-//   getCities: getCities,
-//   getCounties: getCounties
-// };
-
-
-
-
-
-/*
- * Copyright (c) 2014, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * TodoStore
- */
-
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EventEmitter = require('events').EventEmitter;
-var TodoConstants = require('../constants/AppConstants');
+var AppConstants = require('../constants/AppConstants');
 var assign = require('object-assign');
 
 var CHANGE_EVENT = 'change';
 
-var _searchResults = {};
+var APIData = {
+  orgTypes: [],
+  states: [],
+  cities: [],
+  counties: [],
+  searchResults: [],
+};
 
+var formatStates = function(options) {
+  var opts = options.map(function(obj) {
+    return {value:obj.State, label:obj.State};
+  });
+  return opts;
+};
 
-var AJAXRequest = function(path, params, callback) {
-  var queryStringify = function(path, params) {
-    var paramsString = '';
-    Object.keys(params).map(function(key) {
-      paramsString += key + '=' + escape(params[key]) + '&';
-    });
-    return {path: path + '?' + paramsString};
-  };
+var formatOrgTypes = function(options) {
+  var opts = options.map(function(obj) {
+    return {value:obj.type, label:obj.type};
+  });
+  return opts;
+};
 
+var formatCities = function(options) {
+  var opts = options.map(function(obj) {
+    return {value:obj.city, label:obj.city};
+  });
+  return opts;
+};
 
-  $.ajax({
-    type: "GET",
-    url: apiURL,
-    data: queryStringify(path, params),
-    dataType: "text",
-    success: function(xmlResponse) {
-      console.log('ajax response');
-      callback($.xml2json(xmlResponse).data.row);
+var formatCounties = function(options) {
+  var opts = options.map(function(obj) {
+    return {value:obj.CountyName, label:obj.CountyName};
+  });
+
+  //workaround, removing duplicates from county list...
+  var uniqueBuff = [];
+  var uniqueArr = [];
+  opts.forEach(function(el) {
+    if (uniqueBuff.indexOf(el.value.toLowerCase()) === -1) {
+      uniqueBuff.push(el.value.toLowerCase());
+      uniqueArr.push(el);
     }
   });
+
+  return uniqueArr;
 };
 
-var setResults = function(data) {
-  _searchResults = data;
-};
-
-var search = function(params, callback) {
-  var path = "/Organizations";
-
-  var storeData = function(data) {
-    setResults(data);
-    callback();
-  };
-
-  AJAXRequest(path, params, storeData);
-};
 
 var ApiStore = assign({}, EventEmitter.prototype, {
 
-  getData:function() {
-    return _searchResults;
+  getData: function() {
+    return APIData.searchResults;
+  },
+
+  getStates: function() {
+    return APIData.states;
+  },
+
+  getOrgTypes: function() {
+    return APIData.orgTypes;
+  },
+
+  getCities: function() {
+    return APIData.cities;
+  },
+
+  getCounties: function() {
+    return APIData.counties;
   },
 
   emitChange: function() {
@@ -147,27 +96,36 @@ var ApiStore = assign({}, EventEmitter.prototype, {
 
 // Register callback to handle all updates
 AppDispatcher.register(function(action) {
-  var text;
 
   switch(action.actionType) {
 
-    case TodoConstants.APP_DO_SEARCH:
-      //create(text);
-      var searchComplete = function() {
-        ApiStore.emitChange();
-      };
-
-      search(action.params, searchComplete);
+    case AppConstants.NEW_DATA:
+      APIData.searchResults = action.data.map(function(obj) {
+        delete obj.$;
+        return obj;
+      });
+      ApiStore.emitChange();
       break;
-    /*case TodoConstants.APP_STATE_CHANGE_COMPLETE:
-      if (TodoStore.areAllComplete()) {
-        updateAll({complete: false});
-      } else {
-        updateAll({complete: true});
-      }
-      TodoStore.emitChange();
-      break;*/
 
+    case AppConstants.NEW_STATES:
+      APIData.states = formatStates(action.data);
+      ApiStore.emitChange();
+      break;
+
+    case AppConstants.NEW_ORGS:
+      APIData.orgTypes = formatOrgTypes(action.data);
+      ApiStore.emitChange();
+      break;
+
+    case AppConstants.NEW_CITIES:
+      APIData.cities = formatCities(action.data);
+      ApiStore.emitChange();
+      break;
+
+    case AppConstants.NEW_COUNTIES:
+      APIData.counties = formatCounties(action.data);
+      ApiStore.emitChange();
+      break;
 
     default:
       // no op

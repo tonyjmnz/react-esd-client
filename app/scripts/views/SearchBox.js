@@ -1,10 +1,9 @@
 'use strict';
 
 var React = require('react');
-var API = require('../api-interface');
+var API = require('../esd-api');
 var Select = require('react-select');
 
-var ReactPropTypes = React.PropTypes;
 var AppActions = require('../actions/AppActions');
 
 var SearchBox = React.createClass({
@@ -18,82 +17,9 @@ var SearchBox = React.createClass({
       zipCode: ''
     };
   },
-  getOrgTypes: function(input, callback) {
-    var toSelectObject = function(jsonResponse) {
-      var opts = jsonResponse.map(function(obj) {
-        return {value:obj.type, label:obj.type};
-      });
-
-      var selectData = {
-        options: opts,
-        complete: true
-      };
-      callback(null, selectData);
-    };
-
-    API.getOrgTypes(toSelectObject);
-  },
-  getStates: function(input, callback) {
-    var toSelectObject = function(jsonResponse) {
-      var opts = jsonResponse.map(function(obj) {
-        return {value:obj.State, label:obj.State};
-      });
-
-      var selectData = {
-        options: opts,
-        complete: true
-      };
-      callback(null, selectData);
-    };
-
-    API.getStates(toSelectObject);
-  },
-  getCities: function(input, callback) {
-    var toSelectObject = function(jsonResponse) {
-      var opts = jsonResponse.map(function(obj) {
-        return {value:obj.city, label:obj.city};
-      });
-
-      var selectData = {
-        options: opts,
-        complete: true //may have to set it to false to fetch each time
-      };
-      callback(null, selectData);
-    };
-
-    var params = {
-      state: this.state.state,
-      count: this.state.county
-    };
-    API.getCities(params, toSelectObject);
-  },
-  getCounties: function(input, callback) {
-    var toSelectObject = function(jsonResponse) {
-      var opts = jsonResponse.map(function(obj) {
-        return {value:obj.CountyName, label:obj.CountyName};
-      });
-
-      //workaround, removing duplicates from county list...
-      var uniqueBuff = [];
-      var uniqueArr = [];
-      opts.forEach(function(el) {
-        if (uniqueBuff.indexOf(el.value.toLowerCase()) === -1) {
-          uniqueBuff.push(el.value.toLowerCase());
-          uniqueArr.push(el);
-        }
-      });
-
-      var selectData = {
-        options: uniqueArr,
-        complete: true //may have to set it to false to fetch each time
-      };
-      callback(null, selectData);
-    };
-
-    var params = {
-      state: this.state.state,
-    };
-    API.getCounties(params, toSelectObject);
+  componentDidMount: function() {
+    AppActions.fetchStates();
+    AppActions.fetchOrgTypes();
   },
   onOrgTypeChange: function(value) {
     this.setState({orgType: value});
@@ -103,21 +29,36 @@ var SearchBox = React.createClass({
   },
   onStateChange: function(value) {
     this.setState({state: value});
-    //this.setState({state: value, city: ''});
+    //AppActions.fetchCities(this.getAPIParams());
+    AppActions.fetchCounties({
+      state: value
+    });
+
+    AppActions.fetchCities({
+      state: value
+    });
+
+    this.state.city = '';
+    this.state.county = '';
   },
   onCityChange: function(value) {
     this.setState({city: value});
   },
   onCountyChange: function(value) {
     this.setState({county: value});
+    AppActions.fetchCities({
+      state: this.state.state,
+      county: value,
+    });
+
+    //should we clear the city when the county changes?
+    this.state.city = '';
   },
   onZipCodeChange: function(e) {
     this.setState({zipCode: e.target.value});
   },
-  _onSubmit: function(e) {
-    e.preventDefault();
-    console.log(this.state);
-    var params = {
+  getAPIParams: function() {
+    return {
       type: this.state.orgType,
       name: this.state.orgName,
       town: this.state.city,
@@ -125,39 +66,33 @@ var SearchBox = React.createClass({
       zip: this.state.zipCode,
       county: this.state.county
     };
-
-    //API.getOrganizations(params, this.getSearchResults);
-    AppActions.search(params);
-
   },
-  getSearchResults: function(results) {
-    console.log(results ? results.length : 0);
+  _onSubmit: function(e) {
+    e.preventDefault();
+    AppActions.search(this.getAPIParams());
   },
   render: function() {
     return (
       <div className="panel panel-default">
-        <div className="panel-heading">
-          <h3 className="panel-title">Search</h3>
-        </div>
         <div className="panel-body">
           <form className="form" onSubmit={this._onSubmit}>
             <div className="row">
               <div className="col-md-4">
-                <SelectSearchField id="org-type" name="Organization Type" value={this.state.orgType} onChange={this.onOrgTypeChange} dataFetcher={this.getOrgTypes}/>
-              </div>
-              <div className="col-md-4">
                 <SearchField id="org-name" name="Organization Name" value={this.state.orgName} onChange={this.onOrgNameChange} />
               </div>
               <div className="col-md-4">
-                <SelectSearchField id="state" name="State" value={this.state.state} onChange={this.onStateChange} dataFetcher={this.getStates}/>
+                <SelectSearchField id="org-type" name="Organization Type" value={this.state.orgType} onChange={this.onOrgTypeChange} options={this.props.orgTypes}/>
+              </div>
+              <div className="col-md-4">
+                <SelectSearchField id="state" name="State" value={this.state.state} onChange={this.onStateChange} options={this.props.states}/>
               </div>
             </div>
             <div className="row">
               <div className="col-md-4">
-                <SelectSearchField id="city" name="City" value={this.state.city} onChange={this.onCityChange} dataFetcher={this.getCities}/>
+                <SelectSearchField id="city" name="City" value={this.state.city} onChange={this.onCityChange} options={this.props.cities}/>
               </div>
               <div className="col-md-4">
-                <SelectSearchField id="county" name="County" value={this.state.county} onChange={this.onCountyChange} dataFetcher={this.getCounties}/>
+                <SelectSearchField id="county" name="County" value={this.state.county} onChange={this.onCountyChange} options={this.props.counties}/>
               </div>
               <div className="col-md-4">
                 <SearchField id="zip-code" name="Zip Code" value={this.state.zipCode} onChange={this.onZipCodeChange} />
@@ -214,7 +149,7 @@ var SelectSearchField = React.createClass({
     return (
       <div className="form-group">
         <label htmlFor={this.props.id}>{this.props.name}</label>
-        <Select onChange={this.onChange} value={this.props.value} asyncOptions={this.props.dataFetcher} />
+        <Select onChange={this.onChange} value={this.props.value} options={this.props.options} />
       </div>
     );
   }
