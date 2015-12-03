@@ -1,6 +1,6 @@
 /**
  * This component operates as a "Controller-View".  It listens for changes in
- * the TodoStore and passes the new data to its children.
+ * the ApiStore and passes the new data to its children.
  */
 var React = require('react');
 
@@ -23,7 +23,7 @@ function getAppState() {
   };
 }
 
-var EmergencyApp = React.createClass({
+var SearchController = React.createClass({
   getInitialState: function() {
     return getAppState();
   },
@@ -69,4 +69,4 @@ var EmergencyApp = React.createClass({
 
 });
 
-module.exports = EmergencyApp;
+module.exports = SearchController;

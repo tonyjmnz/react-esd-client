@@ -1,10 +1,10 @@
 'use strict';
 
 var React = require('react');
-var API = require('../esd-api');
+
 var Select = require('react-select');
 
-var AppActions = require('../actions/AppActions');
+var ApiActions = require('../actions/ApiActions');
 
 var SearchBox = React.createClass({
   getInitialState: function() {
@@ -17,36 +17,42 @@ var SearchBox = React.createClass({
       zipCode: ''
     };
   },
+
   componentDidMount: function() {
-    AppActions.fetchStates();
-    AppActions.fetchOrgTypes();
+    ApiActions.fetchStates();
+    ApiActions.fetchOrgTypes();
   },
+
   onOrgTypeChange: function(value) {
     this.setState({orgType: value});
   },
+
   onOrgNameChange: function(e) {
     this.setState({orgName: e.target.value});
   },
+
   onStateChange: function(value) {
     this.setState({state: value});
-    //AppActions.fetchCities(this.getAPIParams());
-    AppActions.fetchCounties({
+    //ApiActions.fetchCities(this.getAPIParams());
+    ApiActions.fetchCounties({
       state: value
     });
 
-    AppActions.fetchCities({
+    ApiActions.fetchCities({
       state: value
     });
 
     this.state.city = '';
     this.state.county = '';
   },
+
   onCityChange: function(value) {
     this.setState({city: value});
   },
+
   onCountyChange: function(value) {
     this.setState({county: value});
-    AppActions.fetchCities({
+    ApiActions.fetchCities({
       state: this.state.state,
       county: value,
     });
@@ -54,9 +60,11 @@ var SearchBox = React.createClass({
     //should we clear the city when the county changes?
     this.state.city = '';
   },
+
   onZipCodeChange: function(e) {
     this.setState({zipCode: e.target.value});
   },
+
   getAPIParams: function() {
     return {
       type: this.state.orgType,
@@ -67,10 +75,12 @@ var SearchBox = React.createClass({
       county: this.state.county
     };
   },
+
   _onSubmit: function(e) {
     e.preventDefault();
-    AppActions.search(this.getAPIParams());
+    ApiActions.search(this.getAPIParams());
   },
+
   render: function() {
     return (
       <div className="panel panel-default">
@@ -106,9 +116,6 @@ var SearchBox = React.createClass({
           </form>
         </div>
       </div>
-
-
-
     );
   }
 });
@@ -124,6 +131,7 @@ var SearchField = React.createClass({
   onChange: function(e) {
     this.props.onChange(e);
   },
+
   render: function() {
     return (
       <div className="form-group">
@@ -145,6 +153,7 @@ var SelectSearchField = React.createClass({
   onChange: function(value) {
     this.props.onChange(value);
   },
+
   render: function() {
     return (
       <div className="form-group">

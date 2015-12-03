@@ -11,6 +11,14 @@ var APIData = {
   cities: [],
   counties: [],
   searchResults: [],
+  general: {},
+  locations: {},
+  treatment: {},
+  training: {},
+  facilities: {},
+  equipment: {},
+  physicians: {},
+  people: {},
 };
 
 var formatStates = function(options) {
@@ -40,18 +48,88 @@ var formatCounties = function(options) {
   });
 
   //workaround, removing duplicates from county list...
-  var uniqueBuff = [];
+  /*var uniqueBuff = [];
   var uniqueArr = [];
   opts.forEach(function(el) {
     if (uniqueBuff.indexOf(el.value.toLowerCase()) === -1) {
       uniqueBuff.push(el.value.toLowerCase());
       uniqueArr.push(el);
     }
-  });
+  });*/
 
-  return uniqueArr;
+  return opts;
 };
 
+var formatTabs = function(tabsResponse) {
+  var tabs = tabsResponse.map(function(obj) {
+    return obj.Tab;
+  });
+
+  return tabs;
+};
+
+var formatGeneral = function(generalResponse) {
+  return generalResponse;
+};
+
+var formatLocations = function(locationsResponse) {
+  return locationsResponse;
+};
+
+var formatPeople = function(peopleResponse) {
+  var site = peopleResponse.site;
+  site = site.map(function(pplSite) {
+    if (!pplSite.person) {
+      return pplSite;
+    }
+
+    if (!Array.isArray(pplSite.person)) {
+      pplSite.person = [pplSite.person];
+    }
+
+    pplSite.person = pplSite.person.map(function(person) {
+      return {
+        name: person.honorific + ' ' + person.fName + ' ' + person.mName + ' ' + person.lName + ' ' + person.suffix,
+        role: person.role,
+      };
+    });
+
+    return pplSite;
+  });
+
+  peopleResponse.site = site;
+
+  return peopleResponse;
+};
+
+var formatTreatment = function(treatmentResponse) {
+  return treatmentResponse;
+};
+
+var formatTraining = function(trainingResponse) {
+  return trainingResponse;
+};
+
+var formatFacilities = function(facilitiesResponse) {
+  return facilitiesResponse;
+};
+
+var formatEquipment = function(equipmentResponse) {
+  return equipmentResponse;
+};
+
+var formatPhysicians = function(physiciansResponse) {
+  physiciansResponse.physician =
+    physiciansResponse.physician.map(function(phys) {
+      return {
+        name: phys.fName + ' ' + phys.mName + ' ' + phys.lName,
+        license: phys.license,
+        phone: phys.phone,
+      };
+    });
+
+  return physiciansResponse;
+};
 
 var ApiStore = assign({}, EventEmitter.prototype, {
 
@@ -73,6 +151,42 @@ var ApiStore = assign({}, EventEmitter.prototype, {
 
   getCounties: function() {
     return APIData.counties;
+  },
+
+  getTabs: function() {
+    return APIData.tabs;
+  },
+
+  getGeneral: function() {
+    return APIData.general;
+  },
+
+  getLocations: function() {
+    return APIData.locations;
+  },
+
+  getPhysicians: function() {
+    return APIData.physicians;
+  },
+
+  getTraining: function() {
+    return APIData.training;
+  },
+
+  getEquipment: function() {
+    return APIData.equipment;
+  },
+
+  getTreatment: function() {
+    return APIData.treatment;
+  },
+
+  getFacilities: function() {
+    return APIData.facilities;
+  },
+
+  getPeople: function() {
+    return APIData.people;
   },
 
   emitChange: function() {
@@ -127,8 +241,53 @@ AppDispatcher.register(function(action) {
       ApiStore.emitChange();
       break;
 
+    case AppConstants.NEW_TABS:
+      APIData.tabs = formatTabs(action.data);
+      ApiStore.emitChange();
+      break;
+
+    case AppConstants.NEW_GENERAL:
+      APIData.general = formatGeneral(action.data);
+      ApiStore.emitChange();
+      break;
+
+    case AppConstants.NEW_LOCATIONS:
+      APIData.locations = formatLocations(action.data);
+      ApiStore.emitChange();
+      break;
+
+    case AppConstants.NEW_PEOPLE:
+      APIData.people = formatPeople(action.data);
+      ApiStore.emitChange();
+      break;
+
+    case AppConstants.NEW_TREATMENT:
+      APIData.treatment = formatTreatment(action.data);
+      ApiStore.emitChange();
+      break;
+
+    case AppConstants.NEW_TRAINING:
+      APIData.training = formatTraining(action.data);
+      ApiStore.emitChange();
+      break;
+
+    case AppConstants.NEW_FACILITIES:
+      APIData.facilities = formatFacilities(action.data);
+      ApiStore.emitChange();
+      break;
+
+    case AppConstants.NEW_EQUIPMENT:
+      APIData.equipment = formatEquipment(action.data);
+      ApiStore.emitChange();
+      break;
+
+    case AppConstants.NEW_PHYSICIANS:
+      APIData.physicians = formatPhysicians(action.data);
+      ApiStore.emitChange();
+      break;
+
     default:
-      // no op
+
   }
 });
 
