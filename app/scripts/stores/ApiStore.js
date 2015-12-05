@@ -26,6 +26,10 @@ var APIData = {
 // {} => [{}]
 // [{},{},{}] => [{},{},{}]
 var arrayify = function(obj, property) {
+  if (!obj) {
+    obj = {}
+  }
+
   if (!obj[property]) {
     obj[property] = [];
     return obj;

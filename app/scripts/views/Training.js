@@ -30,7 +30,7 @@ var Training = React.createClass({
           tableClassName="table"
           showPager={false}
           resultsPerPage={100}
-          results={training.length}/>
+          results={training}/>
       );
     }
     return (
