@@ -17,7 +17,9 @@ var Equipment = React.createClass({
 
   render: function() {
     var griddle = '';
-    if (this.props.myData.equipment) {
+    var equipment = this.props.myData.equipment;
+
+    if (equipment && equipment.length) {
       griddle = (
         <Griddle
           columns={['type', 'quantity', 'description']}
@@ -30,7 +32,7 @@ var Equipment = React.createClass({
           tableClassName="table"
           showPager={false}
           resultsPerPage={100}
-          results={this.props.myData.equipment}/>
+          results={equipment}/>
       );
     }
     return (

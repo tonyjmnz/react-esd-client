@@ -25,16 +25,17 @@ var People = React.createClass({
 
   onSelectChange: function(value) {
     this.setState({currentSite: value});
-    var personData = this.props.myData.site[value - 1].person;
-    //wrap in array in case we get only one record
-    if (!personData) {
+
+    if (value === '') {
       this.setState({personData: []})
       return;
     }
 
+    var personData = this.props.myData.site[value - 1].person;
+
+    //wrap in array in case we get only one record
     personData = Array.isArray(personData) ? personData : [personData];
     this.setState({personData: personData})
-
   },
 
   getOptions: function(data) {
@@ -49,7 +50,8 @@ var People = React.createClass({
 
   render: function() {
     var griddle = '';
-    if (this.state.personData.length) {
+    var personData = this.state.personData;
+    if (personData && personData.length) {
       griddle = (
         <Griddle
           columns={['name', 'role']}
@@ -61,7 +63,7 @@ var People = React.createClass({
           tableClassName="table"
           showPager={false}
           resultsPerPage={100}
-          results={this.state.personData}/>
+          results={personData}/>
       );
     }
 

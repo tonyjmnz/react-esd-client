@@ -17,7 +17,9 @@ var Physicians = React.createClass({
 
   render: function() {
     var griddle = '';
-    if (this.props.myData.physician) {
+    var physician = this.props.myData.physician;
+
+    if (physician && physician.length) {
       griddle = (
         <Griddle
           columns={['name', 'license', 'phone']}
@@ -30,7 +32,7 @@ var Physicians = React.createClass({
           tableClassName="table"
           showPager={false}
           resultsPerPage={100}
-          results={this.props.myData.physician}/>
+          results={physician}/>
       );
     }
     return (

@@ -4,6 +4,7 @@ var React = require('react');
 var Header = require('./Header');
 var Link = require('react-router').Link;
 
+//wraps the content with the navbar and footer
 var ContentWrapper = React.createClass({
   render: function() {
     return (

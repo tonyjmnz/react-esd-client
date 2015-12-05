@@ -6,7 +6,7 @@ var React = require('react');
 
 var ContentWrapper = require('./ContentWrapper');
 var SearchBox = require('./SearchBox');
-var DataGrid = require('./DataGrid');
+var SearchGrid = require('./SearchGrid');
 var ApiStore = require('../stores/ApiStore');
 
 /**
@@ -15,7 +15,7 @@ var ApiStore = require('../stores/ApiStore');
 function getAppState() {
   return {
     //searchBoxState: TodoStore.getAll(),
-    dataGridState: ApiStore.getData(),
+    searchGridState: ApiStore.getData(),
     states: ApiStore.getStates(),
     orgTypes: ApiStore.getOrgTypes(),
     cities: ApiStore.getCities(),
@@ -41,8 +41,8 @@ var SearchController = React.createClass({
    */
   render: function() {
     var griddle;
-    if (this.state.dataGridState.length) {
-      griddle = <DataGrid results={this.state.dataGridState} />
+    if (this.state.searchGridState.length) {
+      griddle = <SearchGrid results={this.state.searchGridState} />
     }
 
     return (

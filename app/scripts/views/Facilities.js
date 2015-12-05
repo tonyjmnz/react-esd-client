@@ -17,7 +17,8 @@ var Facilities = React.createClass({
 
   render: function() {
     var griddle = '';
-    if (this.props.myData.facility) {
+    var facility = this.props.myData.facility;
+    if (facility && facility.length) {
       griddle = (
         <Griddle
           columns={['type', 'quantity', 'description']}
@@ -30,7 +31,7 @@ var Facilities = React.createClass({
           tableClassName="table"
           showPager={false}
           resultsPerPage={100}
-          results={this.props.myData.facility}/>
+          results={facility}/>
       );
     }
     return (

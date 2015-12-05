@@ -1,7 +1,7 @@
 var $ = require('jquery');
 require('jquery-xml2json');
 
-var apiURL = "http://people.rit.edu/dmgics/754/23/proxy.php";
+var apiURL = require('./config').apiURL;
 
 var getOrganizations = function(params, callback) {
     var path = "/Organizations";

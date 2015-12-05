@@ -9,6 +9,7 @@ var ReactPropTypes = React.PropTypes;
 
 var Link = require('react-router').Link;
 
+//creates a link column for the grid
 var LinkColumn = React.createClass({
   render: function(){
     var url ="/details/" + this.props.rowData.OrganizationID;
@@ -16,17 +17,12 @@ var LinkColumn = React.createClass({
   }
 });
 
-var DataGrid = React.createClass({
+//creates the grid for the search results
+var SearchGrid = React.createClass({
   propTypes: {
     results: ReactPropTypes.array.isRequired
   },
-  /**
-   * @return {object}
-   */
   render: function() {
-    //useGriddleStyles={false} tableClassName="table"
-    //results={[{"OrganizationID":"1022","type":"Fire Department","Name":"Arch St. Volunteer Fire Department","Email":"asfd105@yahoo.com","city":"Little Rock","zip":"72206","CountyName":"Pulaski","State":"AR"}]}/>
-
     return (
       <div>
         <Griddle
@@ -50,4 +46,4 @@ var DataGrid = React.createClass({
 
 
 
-module.exports = DataGrid;
+module.exports = SearchGrid;

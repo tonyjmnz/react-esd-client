@@ -17,7 +17,9 @@ var Treatment = React.createClass({
 
   render: function() {
     var griddle = '';
-    if (this.props.myData.treatment) {
+    var treatment = this.props.myData.treatment;
+
+    if (treatment && treatment.length) {
       griddle = (
         <Griddle
           columns={['type', 'abbreviation']}
@@ -29,7 +31,7 @@ var Treatment = React.createClass({
           tableClassName="table"
           showPager={false}
           resultsPerPage={100}
-          results={this.props.myData.treatment}/>
+          results={treatment}/>
       );
     }
     return (

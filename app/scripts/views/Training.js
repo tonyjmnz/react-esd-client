@@ -17,7 +17,8 @@ var Training = React.createClass({
 
   render: function() {
     var griddle = '';
-    if (this.props.myData.training) {
+    var training = this.props.myData.training;
+    if (training && training.length) {
       griddle = (
         <Griddle
           columns={['type', 'abbreviation']}
@@ -29,7 +30,7 @@ var Training = React.createClass({
           tableClassName="table"
           showPager={false}
           resultsPerPage={100}
-          results={this.props.myData.training}/>
+          results={training.length}/>
       );
     }
     return (

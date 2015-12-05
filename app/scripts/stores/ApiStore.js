@@ -21,6 +21,23 @@ var APIData = {
   people: {},
 };
 
+//converts a property of an object into an array
+// "" => []
+// {} => [{}]
+// [{},{},{}] => [{},{},{}]
+var arrayify = function(obj, property) {
+  if (!obj[property]) {
+    obj[property] = [];
+    return obj;
+  }
+
+  if (!Array.isArray(obj[property])) {
+    obj[property] = [obj[property]];
+  }
+  return obj;
+};
+
+//format the states in a k=>v pair for the select
 var formatStates = function(options) {
   var opts = options.map(function(obj) {
     return {value:obj.State, label:obj.State};
@@ -28,6 +45,7 @@ var formatStates = function(options) {
   return opts;
 };
 
+//format the org types in a k=>v pair for the select
 var formatOrgTypes = function(options) {
   var opts = options.map(function(obj) {
     return {value:obj.type, label:obj.type};
@@ -35,6 +53,7 @@ var formatOrgTypes = function(options) {
   return opts;
 };
 
+//format the cities in a k=>v pair for the select
 var formatCities = function(options) {
   var opts = options.map(function(obj) {
     return {value:obj.city, label:obj.city};
@@ -42,54 +61,39 @@ var formatCities = function(options) {
   return opts;
 };
 
+//format the counties in a k=>v pair for the select
 var formatCounties = function(options) {
   var opts = options.map(function(obj) {
     return {value:obj.CountyName, label:obj.CountyName};
   });
 
-  //workaround, removing duplicates from county list...
-  /*var uniqueBuff = [];
-  var uniqueArr = [];
-  opts.forEach(function(el) {
-    if (uniqueBuff.indexOf(el.value.toLowerCase()) === -1) {
-      uniqueBuff.push(el.value.toLowerCase());
-      uniqueArr.push(el);
-    }
-  });*/
-
   return opts;
 };
 
+//format the tabs from an object array into a string array
 var formatTabs = function(tabsResponse) {
   var tabs = tabsResponse.map(function(obj) {
     return obj.Tab;
   });
-
   return tabs;
 };
 
+//in case we need to modify the general info
 var formatGeneral = function(generalResponse) {
   return generalResponse;
 };
 
-var formatLocations = function(locationsResponse) {
-  return locationsResponse;
-};
-
+//formats the people info for showing in the tabbed view
 var formatPeople = function(peopleResponse) {
-  var site = peopleResponse.site;
-  site = site.map(function(pplSite) {
-    if (!pplSite.person) {
-      return pplSite;
-    }
+  peopleResponse = arrayify(peopleResponse, 'site');
 
-    if (!Array.isArray(pplSite.person)) {
-      pplSite.person = [pplSite.person];
-    }
+  peopleResponse.site = peopleResponse.site.map(function(pplSite) {
 
+    pplSite = arrayify(pplSite, 'person');
     pplSite.person = pplSite.person.map(function(person) {
       return {
-        name: person.honorific + ' ' + person.fName + ' ' + person.mName + ' ' + person.lName + ' ' + person.suffix,
+        name: person.honorific + ' ' + person.fName + ' ' + person.mName + ' ' +
+          person.lName + ' ' + person.suffix,
         role: person.role,
       };
     });
@@ -97,28 +101,47 @@ var formatPeople = function(peopleResponse) {
     return pplSite;
   });
 
-  peopleResponse.site = site;
-
   return peopleResponse;
 };
 
+//formats the locations info for showing in the tabbed view
+var formatLocations = function(locationsResponse) {
+  locationsResponse = arrayify(locationsResponse, 'location');
+  return locationsResponse;
+};
+
+//formats the treatment info for showing in the tabbed view
 var formatTreatment = function(treatmentResponse) {
+  treatmentResponse = arrayify(treatmentResponse, 'treatment');
   return treatmentResponse;
+
 };
 
+//formats the training info for showing in the tabbed view
 var formatTraining = function(trainingResponse) {
+  trainingResponse = arrayify(trainingResponse, 'training');
   return trainingResponse;
+
 };
 
+//formats the facilities info for showing in the tabbed view
 var formatFacilities = function(facilitiesResponse) {
+  facilitiesResponse = arrayify(facilitiesResponse, 'facility');
   return facilitiesResponse;
+
 };
 
+//formats the equipment info for showing in the tabbed view
 var formatEquipment = function(equipmentResponse) {
+  equipmentResponse = arrayify(equipmentResponse, 'equipment');
   return equipmentResponse;
+
 };
 
+//formats the physicians info for showing in the tabbed view
 var formatPhysicians = function(physiciansResponse) {
+  physiciansResponse = arrayify(physiciansResponse, 'physician');
+
   physiciansResponse.physician =
     physiciansResponse.physician.map(function(phys) {
       return {
@@ -214,10 +237,7 @@ AppDispatcher.register(function(action) {
   switch(action.actionType) {
 
     case AppConstants.NEW_DATA:
-      APIData.searchResults = action.data.map(function(obj) {
-        delete obj.$;
-        return obj;
-      });
+      APIData.searchResults = action.data;
       ApiStore.emitChange();
       break;
 
