@@ -51,6 +51,10 @@ var People = React.createClass({
   render: function() {
     var griddle = '';
     var personData = this.state.personData;
+    var noResults = (
+      <h3 className="vcenter">No people found in this site.</h3>
+    );
+
     if (personData && personData.length) {
       griddle = (
         <Griddle
@@ -74,7 +78,7 @@ var People = React.createClass({
           value={this.state.currentSite}
           placeholder="Please select a site"
           options={this.getOptions(this.props.myData)} />
-          {griddle}
+          {griddle || (this.state.currentSite ? noResults : '')}
       </div>
     );
   }

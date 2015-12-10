@@ -18,6 +18,10 @@ var Facilities = React.createClass({
   render: function() {
     var griddle = '';
     var facility = this.props.myData.facility;
+    var noResults = (
+      <h3 className="vcenter">No facilities found for this organization.</h3>
+    );
+
     if (facility && facility.length) {
       griddle = (
         <Griddle
@@ -36,7 +40,7 @@ var Facilities = React.createClass({
     }
     return (
       <div>
-        {griddle}
+        {griddle || noResults}
       </div>
     );
   }

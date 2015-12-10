@@ -19,6 +19,7 @@ var APIData = {
   equipment: {},
   physicians: {},
   people: {},
+  didFirstSearch: false,
 };
 
 //converts a property of an object into an array
@@ -39,6 +40,19 @@ var arrayify = function(obj, property) {
     obj[property] = [obj[property]];
   }
   return obj;
+};
+
+//clean results from garbage data
+var cleanResults = function(data) {
+  return data.filter(function(record) {
+    return record.Name !== 'null';
+  }).map(function(record) {
+    record.city = record.city === 'null' ? '' : record.city;
+    record.zip = record.zip === 'null' ? '' : record.zip;
+    record.CountyName = record.CountyName === 'null' ? '' : record.CountyName;
+    record.State = record.State === 'null' ? '' : record.State;
+    return record;
+  });
 };
 
 //format the states in a k=>v pair for the select
@@ -216,6 +230,10 @@ var ApiStore = assign({}, EventEmitter.prototype, {
     return APIData.people;
   },
 
+  didFirstSearch: function() {
+    return APIData.didFirstSearch;
+  },
+
   emitChange: function() {
     this.emit(CHANGE_EVENT);
   },
@@ -241,7 +259,8 @@ AppDispatcher.register(function(action) {
   switch(action.actionType) {
 
     case AppConstants.NEW_DATA:
-      APIData.searchResults = action.data;
+      APIData.searchResults = cleanResults(action.data);
+      APIData.didFirstSearch = true;
       ApiStore.emitChange();
       break;
 

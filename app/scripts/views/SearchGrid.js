@@ -36,6 +36,7 @@ var SearchGrid = React.createClass({
               {order: 6, columnName: 'zip', displayName: 'Zip'},
             ]}
           useGriddleStyles={false}
+          resultsPerPage={10}
           tableClassName="table"
           results={this.props.results}/>
       </div>

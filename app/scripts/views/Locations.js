@@ -58,6 +58,9 @@ var Locations = React.createClass({
 
     var googleMap = '';
     var infoList = '';
+    var noResults = (
+      <h3 className="vcenter">Location map not available.</h3>
+    );
 
     if (this.state.locationData) {
       var d = self.state.locationData;
@@ -120,7 +123,7 @@ var Locations = React.createClass({
           {infoList}
         </div>
         <div className="col-md-6">
-          {googleMap}
+          {googleMap || (this.state.currentLocation ? noResults : '')}
         </div>
         {/*JSON.stringify(this.props.myData)*/}
       </div>

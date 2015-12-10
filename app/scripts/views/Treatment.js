@@ -18,6 +18,9 @@ var Treatment = React.createClass({
   render: function() {
     var griddle = '';
     var treatment = this.props.myData.treatment;
+    var noResults = (
+      <h3 className="vcenter">No treatments found in this organization.</h3>
+    );
 
     if (treatment && treatment.length) {
       griddle = (
@@ -36,7 +39,7 @@ var Treatment = React.createClass({
     }
     return (
       <div>
-        {griddle}
+        {griddle || noResults}
       </div>
     );
   }

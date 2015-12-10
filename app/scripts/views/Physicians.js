@@ -18,6 +18,9 @@ var Physicians = React.createClass({
   render: function() {
     var griddle = '';
     var physician = this.props.myData.physician;
+    var noResults = (
+      <h3 className="vcenter">No equipments found for this organization.</h3>
+    );
 
     if (physician && physician.length) {
       griddle = (

@@ -1,9 +1,7 @@
 'use strict';
 
 var React = require('react');
-
 var Select = require('react-select');
-
 var ApiActions = require('../actions/ApiActions');
 
 var SearchBox = React.createClass({

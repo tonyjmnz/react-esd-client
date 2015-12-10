@@ -18,6 +18,11 @@ var Training = React.createClass({
   render: function() {
     var griddle = '';
     var training = this.props.myData.training;
+
+    var noResults = (
+      <h3 className="vcenter">No trainings found in this organization.</h3>
+    );
+
     if (training && training.length) {
       griddle = (
         <Griddle
@@ -35,7 +40,7 @@ var Training = React.createClass({
     }
     return (
       <div>
-        {griddle}
+        {griddle || noResults}
       </div>
     );
   }

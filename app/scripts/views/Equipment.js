@@ -19,6 +19,11 @@ var Equipment = React.createClass({
     var griddle = '';
     var equipment = this.props.myData.equipment;
 
+    var noResults = (
+      <h3 className="vcenter">No equipments found for this organization.</h3>
+    );
+
+
     if (equipment && equipment.length) {
       griddle = (
         <Griddle
@@ -37,7 +42,7 @@ var Equipment = React.createClass({
     }
     return (
       <div>
-        {griddle}
+        {griddle || noResults}
       </div>
     );
   }

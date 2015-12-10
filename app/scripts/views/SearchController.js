@@ -14,8 +14,8 @@ var ApiStore = require('../stores/ApiStore');
  */
 function getAppState() {
   return {
-    //searchBoxState: TodoStore.getAll(),
     searchGridState: ApiStore.getData(),
+    didFirstSearch: ApiStore.didFirstSearch(),
     states: ApiStore.getStates(),
     orgTypes: ApiStore.getOrgTypes(),
     cities: ApiStore.getCities(),
@@ -41,6 +41,11 @@ var SearchController = React.createClass({
    */
   render: function() {
     var griddle;
+
+    var noResults = (
+      <h3 className="vcenter">No results found. Try changing some of the search parameters.</h3>
+    );
+
     if (this.state.searchGridState.length) {
       griddle = <SearchGrid results={this.state.searchGridState} />
     }
@@ -53,8 +58,9 @@ var SearchController = React.createClass({
               orgTypes={this.state.orgTypes}
               cities={this.state.cities}
               counties={this.state.counties}
+              didFirstSearch={this.state.didFirstSearch}
             />
-            {griddle}
+            {griddle || (this.state.didFirstSearch ? noResults : '')}
           </div>
         }/>
     );
