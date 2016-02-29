@@ -6,6 +6,15 @@ Client for the Emergency Services Directory (ESD) API created with React
 
 See it running [here](http://test.tonyjmnz.com/)! -- *The API data is kinda bogus so please test by searching "Some Hospital" to see all the features of the app.*
 
+## Installation
+
+To install the project for the first time run `npm install`
+
+To start development, run `gulp watch`. A development web server will be launched an reloaded upon file changes.
+
+To build the app for production (minify and bundle) run `gulp build`
+
+If I missed anything please refer to [react-gulp-browserify](https://github.com/randylien/generator-react-gulp-browserify)'s awesome documentation!
 
 ## Third-party libraries
 
